@@ -9,7 +9,8 @@
   font-family: 'Google Sans', sans-serif, system-ui;
   transform-style: preserve-3d;
   perspective: 100vmin;
-  background: hsl(210 80% 12%);
+  background: #040f1b;
+  /* background: #0a0b0a; */
 }
 
 /* //x-scroll hidden y-scrll: hidden */

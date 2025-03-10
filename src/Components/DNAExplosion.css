@@ -1,67 +1,68 @@
 .dna-explosion {
-    height: 65vmin;
-    aspect-ratio: 2/5;
-    display: grid;
-    transform-style: preserve-3d;
-    transform: rotateX(0deg);
-    rotate: 30deg;
-    gap: 0.5vmin;
+  height: 65vmin;
+  aspect-ratio: 2/5;
+  display: grid;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg);
+  rotate: 30deg;
+  gap: 0.5vmin;
+}
+body{
+  all:unset;
+  overflow-x:hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.explosion-node {
+  background: var(--bg, white);
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* border: 0.5vmin solid black; */
+  position: absolute;
+  opacity: 1;
+  animation: breakApart 3s cubic-bezier(0.5, -0.5, 0.5, 1.5) forwards, fadeOut 4s ease-in forwards 2s;
+}
+
+/* Explode the nodes away from the center */
+@keyframes breakApart {
+  0% {
+    transform: translate(0, 0) scale(1);
   }
-  body{
-    all:unset;
-    overflow:hidden;
+  100% {
+    transform: translate(calc((var(--random-x) * 10vmin)), calc((var(--random-y) * 10vmin))) scale(4);
   }
-  .explosion-node {
-    background: var(--bg, white);
-    height: 100%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    /* border: 0.5vmin solid black; */
-    position: absolute;
+}
+
+/* Gradually fade out nodes */
+@keyframes fadeOut {
+  0% {
     opacity: 1;
-    animation: breakApart 3s cubic-bezier(0.5, -0.5, 0.5, 1.5) forwards, fadeOut 4s ease-in forwards 2s;
   }
-  
-  /* Explode the nodes away from the center */
-  @keyframes breakApart {
-    0% {
-      transform: translate(0, 0) scale(1);
-    }
-    100% {
-      transform: translate(calc((var(--random-x) * 10vmin)), calc((var(--random-y) * 10vmin))) scale(4);
-    }
-  }
-  
-  /* Gradually fade out nodes */
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
- 
-  .explosion {
-    --speed: 2;
-    --delay: calc(sin((var(--index) / var(--total)) * 45deg) * var(--speed) * -1s);
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-  }
-  
-  .strand {
-    --speed: 2;
-    --delay: calc(sin((var(--index) / var(--total)) * 45deg) * var(--speed) * -1s);
-    width: 100%;
-    transform-style: preserve-3d;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  /* Hide the rods by setting opacity to 0 */
-  .rod {
+  100% {
     opacity: 0;
   }
-  
+}
+
+.explosion {
+  --speed: 2;
+  --delay: calc(sin((var(--index) / var(--total)) * 45deg) * var(--speed) * -1s);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.strand {
+  --speed: 2;
+  --delay: calc(sin((var(--index) / var(--total)) * 45deg) * var(--speed) * -1s);
+  width: 100%;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Hide the rods by setting opacity to 0 */
+.rod {
+  opacity: 0;
+}
