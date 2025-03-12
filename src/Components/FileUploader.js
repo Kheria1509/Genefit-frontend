@@ -1,121 +1,94 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Typography,
-  Checkbox,
-  Link,
-  CircularProgress,
-} from '@mui/material';
-import FileUploader from './FileUploader'; // Adjust path as needed
+import React from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Box, Button, Typography, CircularProgress } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-export default function MainPage() {
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [loading, setLoading] = useState(false);
+export default function FileUploader() {
+  const { getRootProps, getInputProps, isDragActive, isDragReject, acceptedFiles, fileRejections } = useDropzone({
+    accept: {
+      'image/*': [],
+      'application/pdf': [],
+    },
+    onDrop: (acceptedFiles) => {
+      console.log('Files dropped:', acceptedFiles);
+    },
+  });
 
-  const handleSubmit = () => {
-    // Handle form submission
-  };
+  const isDragRejectStyle = isDragReject ? { borderColor: '#ff3d00' } : {};
+  const isDragActiveStyle = isDragActive ? { borderColor: '#06cbaa' } : {};
 
   return (
     <Box
       sx={{
-        backgroundColor: '#040f1b',
-        minHeight: '100vh',
+        backgroundColor: '#13212c',
         padding: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        color: '#fff',
-        fontFamily: 'Roboto, sans-serif',
+        borderRadius: '8px',
+        width: '100%',
+        maxWidth: '600px',
+        textAlign: 'center',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        margin: '20px auto',
+        border: '2px dashed',
+        borderColor: isDragActive ? '#06cbaa' : '#25add6',
+        ...isDragRejectStyle,
       }}
+      {...getRootProps()}
     >
-      {/* File uploader and Terms & Conditions */}
-      <Box
+      <input {...getInputProps()} />
+      <CloudUploadIcon sx={{ fontSize: 40, color: '#fff', mb: 2 }} />
+      <Typography
+        variant="h6"
         sx={{
-          display: 'flex',
-          width: '100%',
-          maxWidth: '1200px',
-          gap: '20px',
-          justifyContent: 'space-between',
+          color: '#fff',
+          fontFamily: "'Lora', serif",
+          mb: 2,
         }}
       >
-        {/* File Uploader on the left */}
-        <Box
+        Drag & Drop  or click to select
+      </Typography>
+
+      {acceptedFiles.length > 0 && (
+        <Typography
+          variant="body1"
           sx={{
-            flex: '0 0 60%',
+            color: '#fff',
+            fontStyle: 'italic',
+            mb: 2,
           }}
         >
-          <FileUploader />
-        </Box>
+          {acceptedFiles.map(file => file.name).join(', ')}
+        </Typography>
+      )}
 
-        {/* Terms & Conditions and Submit Button on the right */}
-        <Box
+      {fileRejections.length > 0 && (
+        <Typography
+          variant="body1"
           sx={{
-            flex: '0 0 40%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
+            color: '#ff3d00',
+            mb: 2,
           }}
         >
-          {/* Terms & Conditions */}
-          <Box sx={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
-            <Checkbox
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-              sx={{
-                color: '#06cbaa',
-                '&.Mui-checked': {
-                  color: '#25add6',
-                },
-              }}
-            />
-            <Typography variant="body1" sx={{ color: '#fff', ml: 1 }}>
-              I accept the{' '}
-              <Link
-                href="#"
-                sx={{
-                  color: '#25add6',
-                  textDecoration: 'underline',
-                  '&:hover': {
-                    color: '#06cbaa',
-                  },
-                }}
-              >
-                Terms and Conditions
-              </Link>
-            </Typography>
-          </Box>
+          Some files were rejected.
+        </Typography>
+      )}
 
-          {/* Loading Spinner and Submit Button */}
-          {loading && (
-            <CircularProgress
-              size={24}
-              sx={{
-                color: '#25add6',
-                position: 'relative',
-                marginBottom: '20px',
-                zIndex: 1,
-              }}
-            />
-          )}
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#25add6',
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: '#06cbaa',
-              },
-              marginTop: '20px',
-            }}
-            onClick={handleSubmit}
-            disabled={loading || !termsAccepted}
-          >
-            Submit
-          </Button>
-        </Box>
-      </Box>
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: '#13212c',
+          border: '1px solid white',
+          color: '#fff',
+          '&:hover': {
+            border: '1px solid #06cbaa',
+            transform: 'scale(1.05)',
+            transition: '0.3s',
+          },
+          marginTop: '20px',
+        }}
+        onClick={() => alert('Files Upload successfully.')}
+      >
+        Upload
+      </Button>
     </Box>
   );
 }

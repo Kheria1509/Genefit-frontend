@@ -25,6 +25,9 @@ body {
   perspective: 100vmin;
   background: hsl(210 80% 12%);
 }
+body::-webkit-scrollbar {
+  display: none !important;
+}
 
 .dna {
   height: 65vmin;

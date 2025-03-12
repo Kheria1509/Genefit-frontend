@@ -13,8 +13,8 @@
   /* background: #0a0b0a; */
 }
 
-/* //x-scroll hidden y-scrll: hidden */
-/* //overflow: hidden; */
-/* //background-color: black; */
-/* //display: flex; */
+/* hide scroll bar */
+body::-webkit-scrollbar {
+  display: none !;
+}
 

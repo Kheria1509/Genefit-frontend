@@ -9,7 +9,6 @@ import {
   Select,
   MenuItem,
   Button,
-  TextField,
   Checkbox,
   CircularProgress,
   Link,
@@ -103,6 +102,7 @@ export default function Mainpage() {
           justifyContent: "space-between",
           width: "100%",
           maxWidth: "1200px",
+          gap: "20px",
         }}
       >
         {/* First Card: Name and Email */}
@@ -120,9 +120,9 @@ export default function Mainpage() {
         >
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="name-input" sx={{
-                color: "#fff", // default color
+                color: "#fff",
                 "&.Mui-focused": {
-                  color: "#fff", // color when focused
+                  color: "#fff",
                   background:"#13212c",
                   padding:"0px 10px",
                 },
@@ -141,7 +141,7 @@ export default function Mainpage() {
                   borderColor: "#06cbaa",
                 },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#0a0b0a", // default border color
+                  borderColor: "#0a0b0a",
                 },
               }}
             />
@@ -149,9 +149,9 @@ export default function Mainpage() {
 
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="email-input" sx={{
-                color: "#fff", // default color
+                color: "#fff",
                 "&.Mui-focused": {
-                  color: "#fff", // color when focused
+                  color: "#fff",
                   background:"#13212c",
                   padding:"0px 10px",
                 },
@@ -170,16 +170,16 @@ export default function Mainpage() {
                   borderColor: "#06cbaa",
                 },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#0a0b0a", // default border color
+                  borderColor: "#0a0b0a",
                 },
               }}
             />
           </FormControl>
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="sex-select" sx={{
-                color: "#fff", // default color
+                color: "#fff",
                 "&.Mui-focused": {
-                  color: "#fff", // color when focused
+                  color: "#fff",
                   background:"#13212c",
                   padding:"0px 10px",
                 },
@@ -201,7 +201,7 @@ export default function Mainpage() {
                   borderColor: "#06cbaa",
                 },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#0a0b0a", // default border color
+                  borderColor: "#0a0b0a",
                 },
               }}
             >
@@ -320,64 +320,96 @@ export default function Mainpage() {
           </FormControl>
         </Card>
       </Box>
-      {/* file uploader */}
-      <FileUploader/>
-      {/* Terms & Conditions */}
-      <Box sx={{ marginTop: "20px", display: "flex", alignItems: "center" }}>
-        <Checkbox
-          checked={termsAccepted}
-          onChange={(e) => setTermsAccepted(e.target.checked)}
+
+      {/* File Uploader and Terms */}
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          maxWidth: "1200px",
+          gap: "20px",
+          marginTop: "30px",
+        }}
+      >
+        <Box
           sx={{
-            color: "#06cbaa",
-            "&.Mui-checked": {
-              color: "#25add6",
-            },
+            flex: "0 0 60%",
+            // backgroundColor: "#13212c",
+            // padding: "20px",
+            borderRadius: "8px",
+            // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            border: "1px solid linear-gradient(to right, #25add6, #06cbaa)",
+            display: "flex",
+            justifyContent:'left',
           }}
-        />
-        <Typography variant="body1" sx={{ color: "#fff" }}>
-          I accept the{" "}
-          <Link
-            href="#"
+        >
+          <FileUploader />
+        </Box>
+
+        <Box
+          sx={{
+            flex: "0 0 40%",
+            // backgroundColor: "#13212c",
+            padding: "20px",
+            // borderRadius: "8px",
+            // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            border: "1px solid linear-gradient(to right, #25add6, #06cbaa)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems:"left",
+          }}
+        >
+          <Typography
+            variant="body2"
             sx={{
-              color: "#25add6",
-              textDecoration: "underline",
+              color: "#fff",
+              marginBottom: "10px",
+              textAlign: "left",
+            }}
+          >
+            By uploading your genetic data, you agree to our{" "}
+            <Link href="#" color="#06cbaa">
+              Terms and Conditions
+            </Link>{" "}
+            and{" "}
+            <Link href="#" color="#06cbaa">
+              Privacy Policy
+            </Link>.
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Checkbox
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              sx={{ color: "#06cbaa", "&.Mui-checked": { color: "#06cbaa" } }}
+            />
+            <Typography variant="body2" sx={{ color: "#fff" }}>
+              I accept the terms and conditions
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={loading}
+            sx={{
+              marginTop: "20px",
+              fontFamily: "'Lora', serif",
+              backgroundColor: "#13212c",
+              border: "1px solid #25add6",
+              maxWidth: "200px",
+              
               "&:hover": {
-                color: "#06cbaa",
+                transform: "scale(1.05)",
+                border: "1.5px solid #06cbaa",
+                transition: "all 0.3s",
               },
             }}
           >
-            Terms and Conditions
-          </Link>
-        </Typography>
+            {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Submit"}
+          </Button>
+        </Box>
       </Box>
-
-      {/* Loading Spinner and Submit Button */}
-      {loading && (
-        <CircularProgress
-          size={24}
-          sx={{
-            color: "#25add6",
-            position: "relative",
-            marginBottom: "20px",
-            zIndex: 1,
-          }}
-        />
-      )}
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: "#25add6",
-          color: "#fff",
-          "&:hover": {
-            backgroundColor: "#06cbaa",
-          },
-          marginTop: "20px",
-        }}
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        Submit
-      </Button>
     </Box>
   );
 }
