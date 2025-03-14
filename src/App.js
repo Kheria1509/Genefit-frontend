@@ -3,6 +3,7 @@ import './App.css';
 import DNAAnimation from './Components/DNAAnimation';
 import DNAExplosion from './Components/DNAExplosion';
 import Mainpage from './Components/Mainpage';
+import Loader from './Components/Loader';
 
 function App() {
   const [showExplosion, setShowExplosion] = useState(false);
@@ -17,16 +18,14 @@ function App() {
   // }, []);
 
   //when mouse click on the screen, show the explosion
-  const handleClick = () => {
-    setShowExplosion(true);
-  }
+  
 
   return (
-    <div className="App" onClick={handleClick}>
+    <div className="App" >
       
-      {/* {!showExplosion && <DNAAnimation />}
-      {showExplosion && <DNAExplosion />} */}
+      
       <Mainpage/>
+      {/* <Loader/> */}
     </div>
   );
 }

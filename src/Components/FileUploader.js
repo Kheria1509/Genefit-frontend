@@ -1,16 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Box, Button, Typography, CircularProgress } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-export default function FileUploader() {
-  const { getRootProps, getInputProps, isDragActive, isDragReject, acceptedFiles, fileRejections } = useDropzone({
-    accept: {
-      'image/*': [],
-      'application/pdf': [],
-    },
+export default function FileUploader(props) {
+  const { setCsvresult } = props;
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleupload = async () => {
+    if (!selectedFile) {
+      alert('Please select a file before uploading');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      setIsUploading(true); // Start upload
+      const res = await fetch('https://98ef-2401-4900-55b7-a240-7153-b0bc-7d07-f1c5.ngrok-free.app/predict_from_csv', {
+        method: 'POST',
+        applicationType: 'application/json',
+        body: formData,
+      });
+      
+      const data = await res.json(); // Assuming the response is JSON
+      console.log('Upload response:', data);
+      setCsvresult(data); // Use setCsvresult to update state
+      setIsUploading(false); // Stop upload
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setIsUploading(false); // Stop upload on error
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    accept: { 'text/csv': [] },
     onDrop: (acceptedFiles) => {
-      console.log('Files dropped:', acceptedFiles);
+      if (acceptedFiles && acceptedFiles.length > 0) {
+        setSelectedFile(acceptedFiles[0]); // Save the selected file
+        console.log('File selected:', acceptedFiles[0]);
+      }
     },
   });
 
@@ -32,45 +63,45 @@ export default function FileUploader() {
         borderColor: isDragActive ? '#06cbaa' : '#25add6',
         ...isDragRejectStyle,
       }}
-      {...getRootProps()}
     >
-      <input {...getInputProps()} />
-      <CloudUploadIcon sx={{ fontSize: 40, color: '#fff', mb: 2 }} />
-      <Typography
-        variant="h6"
-        sx={{
-          color: '#fff',
-          fontFamily: "'Lora', serif",
-          mb: 2,
-        }}
-      >
-        Drag & Drop  or click to select
-      </Typography>
-
-      {acceptedFiles.length > 0 && (
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        <CloudUploadIcon sx={{ fontSize: 40, color: '#fff', mb: 2 }} />
         <Typography
-          variant="body1"
+          variant="h6"
           sx={{
             color: '#fff',
-            fontStyle: 'italic',
+            fontFamily: "'Lora', serif",
             mb: 2,
           }}
         >
-          {acceptedFiles.map(file => file.name).join(', ')}
+          Drag & Drop or click to select
         </Typography>
-      )}
 
-      {fileRejections.length > 0 && (
-        <Typography
-          variant="body1"
-          sx={{
-            color: '#ff3d00',
-            mb: 2,
-          }}
-        >
-          Some files were rejected.
-        </Typography>
-      )}
+        {selectedFile ? (
+          <Typography
+            variant="body1"
+            sx={{
+              color: '#fff',
+              fontStyle: 'italic',
+              mb: 2,
+            }}
+          >
+            {selectedFile.name}
+          </Typography>
+        ) : (
+          <Typography
+            variant="body1"
+            sx={{
+              color: '#fff',
+              fontStyle: 'italic',
+              mb: 2,
+            }}
+          >
+            No file selected
+          </Typography>
+        )}
+      </div>
 
       <Button
         variant="contained"
@@ -85,9 +116,10 @@ export default function FileUploader() {
           },
           marginTop: '20px',
         }}
-        onClick={() => alert('Files Upload successfully.')}
+        onClick={handleupload}
+        disabled={isUploading || !selectedFile}
       >
-        Upload
+        {isUploading ? 'Uploading...' : 'Upload'}
       </Button>
     </Box>
   );
