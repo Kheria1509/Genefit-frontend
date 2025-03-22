@@ -1,39 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Button, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 export default function FileUploader(props) {
-  const { setCsvresult } = props;
-  const [isUploading, setIsUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const { isUploading, setIsUploading,setSelectedFile,selectedFile} = props;
+  
+  const handlefile=()=>{
+    setIsUploading(true);
+    
+  }
+  useEffect(() => {
+    setIsUploading(false);
+  }, [selectedFile]);
 
-  const handleupload = async () => {
-    if (!selectedFile) {
-      alert('Please select a file before uploading');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    try {
-      setIsUploading(true); // Start upload
-      const res = await fetch('https://98ef-2401-4900-55b7-a240-7153-b0bc-7d07-f1c5.ngrok-free.app/predict_from_csv', {
-        method: 'POST',
-        applicationType: 'application/json',
-        body: formData,
-      });
-      
-      const data = await res.json(); // Assuming the response is JSON
-      console.log('Upload response:', data);
-      setCsvresult(data); // Use setCsvresult to update state
-      setIsUploading(false); // Stop upload
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      setIsUploading(false); // Stop upload on error
-    }
-  };
+  
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     accept: { 'text/csv': [] },
@@ -108,7 +89,7 @@ export default function FileUploader(props) {
         sx={{
           backgroundColor: '#13212c',
           border: '1px solid white',
-          color: '#fff',
+          color: '#fff !important',
           '&:hover': {
             border: '1px solid #06cbaa',
             transform: 'scale(1.05)',
@@ -116,10 +97,10 @@ export default function FileUploader(props) {
           },
           marginTop: '20px',
         }}
-        onClick={handleupload}
+        onClick={handlefile}
         disabled={isUploading || !selectedFile}
       >
-        {isUploading ? 'Uploading...' : 'Upload'}
+        {isUploading ? 'File marked for Upload' : 'Mark for Upload'}
       </Button>
     </Box>
   );

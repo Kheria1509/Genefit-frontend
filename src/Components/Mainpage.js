@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -20,6 +20,7 @@ import FileUploader from "./FileUploader";
 import Loader from "./Loader";
 import DNAAnimation from "./DNAAnimation";
 import DNAExplosion from "./DNAExplosion";
+import HealthNutritionInfo from "./Info";
 
 export default function Mainpage() {
   const [loading, setLoading] = useState(true); // Show loader initially
@@ -35,15 +36,55 @@ export default function Mainpage() {
   const [height, setHeight] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [csvresult, setCsvresult] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
+  const [showpage2, setShowpage2] = useState(false);
+
+  const handleupload = async () => {
+    if (!selectedFile) {
+      alert('Please select a file before uploading');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      setIsUploading(true); // Start upload
+      const res = await fetch('https://98ef-2401-4900-55b7-a240-7153-b0bc-7d07-f1c5.ngrok-free.app/predict_from_csv', {
+        method: 'POST',
+        applicationType: 'application/json',
+        body: formData,
+      });
+      
+      const data = await res.json(); // Assuming the response is JSON
+      console.log('Upload response:', data);
+      setCsvresult(data); // Use setCsvresult to update state
+      setIsUploading(false); // Stop upload
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setIsUploading(false); // Stop upload on error
+    }
+  };
 
   // Simulate loading for 3 seconds on page load
   setTimeout(() => {
     setLoading(false); // Loader is hidden after this
-  }, 3000);
+  }, 2000);
 
   const handleSubmit = async () => {
     if (!termsAccepted) {
       alert("Please accept the terms before submitting.");
+      return;
+    }
+  
+    if (!selectedFile) {
+      alert('Please select a file before uploading');
+      return;
+    }
+  
+    if (!isUploading) {
+      alert('Please mark the file to upload');
       return;
     }
   
@@ -60,21 +101,20 @@ export default function Mainpage() {
       return;
     }
   
-    // check body weight and height are numbers
+    // Check if body weight and height are numbers
     if (isNaN(body_weight) || isNaN(height)) {
       alert("Body weight and height must be numbers.");
       return;
     }
   
-    // check age is a number
+    // Check if age is a number
     if (isNaN(age)) {
       alert("Age must be a number.");
       return;
     }
   
     // Prepare data to send to the API
-    const url =
-      "https://98ef-2401-4900-55b7-a240-7153-b0bc-7d07-f1c5.ngrok-free.app/generate_recommendations";
+    const url = "https://f433-2401-4900-55b7-a240-9c27-7cd4-d3ad-29e6.ngrok-free.app/generate_recommendations";
     const data = {
       name: name,
       age: parseInt(age),
@@ -85,9 +125,12 @@ export default function Mainpage() {
       gender: sex,
     };
   
-    console.log(data);
+    console.log("rec",data);
   
     try {
+      setShowDna(true); // Show the DNA animation
+  
+      // First, send the JSON data
       const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -95,23 +138,68 @@ export default function Mainpage() {
         },
         body: JSON.stringify(data),
       });
-  
+      
       if (!res.ok) {
-        // Handle non-200 responses
         const errorMessage = await res.text();
-        alert(`Error: ${errorMessage}`);
+        alert(`Error in generating recommendations: ${errorMessage}`);
+        setShowDna(false);
         return;
       }
   
       const responseData = await res.json(); // Assuming the API returns JSON
-      console.log(responseData);
-      // Handle the successful response
-      alert("Form submitted successfully.");
+      setRecommendation(responseData); // Update the state with the response
+      console.log('Recommendation:', responseData);
+  
+      // Now, send the file as form data
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+  
+      const res2 = await fetch('https://f433-2401-4900-55b7-a240-9c27-7cd4-d3ad-29e6.ngrok-free.app/predict_from_csv', {
+        method: 'POST',
+        body: formData, // Send formData in the body
+      });
+  
+      if (!res2.ok) {
+        const errorMessage = await res2.text();
+        alert(`Error uploading file: ${errorMessage}`);
+        setShowDna(false);
+        return;
+      }
+  
+      const data2 = await res2.json(); // Assuming the response is JSON
+      if (data2.error) {
+        // Check if there's an error in the file processing response
+        alert(`File upload error: ${data2.error}`);
+        setShowDna(false);
+        return;
+      }
+  
+      console.log('Upload response:', data2);
+      setCsvresult(data2); // Update CSV result state
+  
+      setShowDna(false); // Hide the DNA animation
+      setShowExplosion(true); // Show the DNA explosion
     } catch (error) {
+      setShowDna(false); // Hide the DNA animation
+      setShowExplosion(false); // Hide the DNA explosion
       console.error("Error submitting the form:", error);
-      alert("There was an error submitting the form. Please try again.");
+      setTimeout(() => {
+        alert("There was an error submitting the form. Please try again.");
+      }, 0); // Show alert immediately
     }
   };
+  //if csv and recommendation is not null, show page 2 after 3 seconds
+  useEffect(() => {
+    if (csvresult && recommendation) {
+      const timer = setTimeout(() => {
+        setShowpage2(true);
+      }, 3000);
+  
+      return () => clearTimeout(timer);
+    }
+  
+  }, [csvresult, recommendation]);
+
   
 
   return (
@@ -124,6 +212,8 @@ export default function Mainpage() {
       {/* DNA Explosion: Show after DNA animation completes */}
       {showExplosion && <DNAExplosion />}
 
+      {/* Page 2: Show after DNA explosion */}
+      {showpage2 && <HealthNutritionInfo res1={recommendation} res2={csvresult} name={name}/>}
       {/* Form Box: Only show when loader is done and no animation is active */}
       {!loading && !showDna && !showExplosion && (
         <Box
@@ -499,7 +589,12 @@ export default function Mainpage() {
                 justifyContent: "left",
               }}
             >
-              <FileUploader />
+              <FileUploader 
+              isUploading= {isUploading}
+              selectedFile= {selectedFile}
+              setSelectedFile= {setSelectedFile}
+              setIsUploading={setIsUploading}
+              />
             </Box>
 
             <Box

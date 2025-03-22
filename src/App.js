@@ -4,6 +4,7 @@ import DNAAnimation from './Components/DNAAnimation';
 import DNAExplosion from './Components/DNAExplosion';
 import Mainpage from './Components/Mainpage';
 import Loader from './Components/Loader';
+import HealthNutritionInfo from './Components/Info';
 
 function App() {
   const [showExplosion, setShowExplosion] = useState(false);
@@ -25,6 +26,7 @@ function App() {
       
       
       <Mainpage/>
+      {/* <HealthNutritionInfo/> */}
       {/* <Loader/> */}
     </div>
   );
