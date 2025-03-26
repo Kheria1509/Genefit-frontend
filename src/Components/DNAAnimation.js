@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography } from '@mui/material';
 import './DNAAnimation.css';
 
 const DNAAnimation = () => {
+  const [loadingText, setLoadingText] = useState("Wait while analyzing your DNA...");
+
   useEffect(() => {
     // Set random colors
     const COLORS = ['hsl(44, 98%, 60%)', 'hsl(197, 50%, 44%)', 'hsl(300, 100%, 100%)', 'hsl(331, 76%, 50%)'];
@@ -19,18 +22,45 @@ const DNAAnimation = () => {
         STRANDS[s].style.setProperty('--delay', `calc((${DELAY} * var(--speed)) * -1s)`);
       }
     }
+
+    // Change loading text every 3 seconds
+    const textInterval = setInterval(() => {
+      setLoadingText((prevText) =>
+        prevText === "Wait while analyzing your DNA..." ? "Please wait! it may take a few minutes..." : "Wait while analyzing your DNA..."
+      );
+    }, 5000);
+
+    return () => {
+      clearInterval(textInterval);
+    };
   }, []);
 
   return (
-    <div className='dna-body' >
-        <div className="dna" style={{ '--total': 13 }}>
-      {[...Array(13).keys()].map(index => (
-        <div className="strand" key={index} style={{ '--index': index + 1 }}>
-          <div className="strand__node"></div>
-          <div className="strand__node"></div>
-        </div>
-      ))}
-    </div>
+    <div className='dna-body'>
+      <div className="dna" style={{ '--total': 13 }}>
+        {[...Array(13).keys()].map(index => (
+          <div className="strand" key={index} style={{ '--index': index + 1 }}>
+            <div className="strand__node"></div>
+            <div className="strand__node"></div>
+          </div>
+        ))}
+      </div>
+
+      {/* Loading Text */}
+      <div className="loading-text">
+        <Typography
+          variant="h6"
+          sx={{
+            marginTop: '40px',
+            color: '#25add6',
+            fontSize: '1.5rem',
+            fontFamily: 'monospace',
+            textAlign: 'center',
+          }}
+        >
+          {loadingText}
+        </Typography>
+      </div>
     </div>
   );
 };

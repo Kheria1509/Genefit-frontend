@@ -4,28 +4,41 @@ import logo from "../assets/Logo.png";
 
 const HealthNutritionInfo = (props) => {
     const { name, res1, res2 } = props;
+    console.log("res1", res1);
+    console.log("res2", res2);
+
+    //split res1 by "\n"
+    const firstout=res1.response.split("\n");
 
     // Default values for res1 and res2 if not provided
     const defaultRes1 = {
-        Health: "Not Provided",
-        RecommendedCaloriesIntake: "Not Provided",
-        RecommendedProteinIntake: "Not Provided",
+        Health: "N/A",
+        RecommendedCaloriesIntake: "N/A",
+        RecommendedProteinIntake: "N/A",
         OtherMacronutrients: {
-            Carbs: "Not Provided",
-            Fats: "Not Provided",
-            Fibre: "Not Provided",
+            Carbs: "N/A",
+            Fats: "N/A",
+            Fibre: "N/A",
         },
-        DiagnosedDisease: "Not Provided",
-        LifestyleRecommendations: "Not Provided",
+        DiagnosedDisease: "N/A",
+        LifestyleRecommendations: "N/A",
     };
 
     const defaultRes2 = [
-        { ClinicalSignificancePrediction: 'Not Provided', DiseasePrediction: 'Not Provided' },
+        { ClinicalSignificancePrediction: 'N/A', DiseasePrediction: 'N/A' },
     ];
 
     // Use default values if res1 or res2 are not provided
-    const healthData = res1 || defaultRes1;
-    const clinicalData = res2 || defaultRes2;
+    const healthData = res1 ? {
+        Health: res1.Health || defaultRes1.Health,
+        RecommendedCaloriesIntake: res1.RecommendedCaloriesIntake || defaultRes1.RecommendedCaloriesIntake,
+        RecommendedProteinIntake: res1.RecommendedProteinIntake || defaultRes1.RecommendedProteinIntake,
+        OtherMacronutrients: res1.OtherMacronutrients || defaultRes1.OtherMacronutrients,
+        DiagnosedDisease: res1.DiagnosedDisease || defaultRes1.DiagnosedDisease,
+        LifestyleRecommendations: res1.LifestyleRecommendations || defaultRes1.LifestyleRecommendations,
+    } : defaultRes1;
+
+    const clinicalData = res2 && Array.isArray(res2) && res2.length > 0 ? res2 : defaultRes2;
 
     return (
         <>
@@ -86,30 +99,15 @@ const HealthNutritionInfo = (props) => {
                     </Typography>
                     <Divider sx={{ backgroundColor: "#25add6", marginBottom: "15px" }} />
                     <CardContent>
-                        <Typography variant="body1" sx={{ color: "#fff", marginBottom: "10px" }}>
-                            <strong>Health:</strong> {healthData.Health}
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: "#fff", marginBottom: "10px" }}>
-                            <strong>Recommended Calories Intake:</strong> {healthData.RecommendedCaloriesIntake}
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: "#fff", marginBottom: "10px" }}>
-                            <strong>Recommended Protein Intake:</strong> {healthData.RecommendedProteinIntake}
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: "#fff", marginBottom: "10px" }}>
-                            <strong>Other Macronutrients:</strong>
-                        </Typography>
-                        <Box component="ul" sx={{ color: "#fff", marginBottom: "10px", paddingLeft: "20px" }}>
-                            {/* <li>Carbs: {healthData.OtherMacronutrients.Carbs}</li>
-                            <li>Fats: {healthData.OtherMacronutrients.Fats}</li>
-                            <li>Fibre: {healthData.OtherMacronutrients.Fibre}</li> */}
-                            {healthData.OtherMacronutrients}
-                        </Box>
-                        <Typography variant="body1" sx={{ color: "#fff", marginBottom: "10px" }}>
-                            <strong>Diagnosed Disease:</strong> {healthData.DiagnosedDisease}
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: "#fff" }}>
-                            <strong>Lifestyle Recommendations:</strong> {healthData.LifestyleRecommendations}
-                        </Typography>
+                        {firstout.map((line, index) => (
+                            <Typography
+                                key={index}
+                                variant="body1"
+                                sx={{ color: "#fff", marginBottom: "10px" }}
+                            >
+                                {line}
+                            </Typography>
+                        ))}
                     </CardContent>
                 </Card>
 
@@ -128,7 +126,7 @@ const HealthNutritionInfo = (props) => {
                     <Divider sx={{ backgroundColor: "#25add6", marginBottom: "15px" }} />
                     <CardContent>
                         <Grid container spacing={3}>
-                            {clinicalData.map((item, index) => (
+                            {res2.map((item, index) => (
                                 <Grid item xs={12} sm={6} md={4} key={index}>
                                     <Box
                                         sx={{
@@ -144,10 +142,10 @@ const HealthNutritionInfo = (props) => {
                                         }}
                                     >
                                         <Typography variant="body1" sx={{ color: "#fff", marginBottom: "10px" }}>
-                                            <strong>Clinical Significance Prediction:</strong> {item.ClinicalSignificancePrediction}
+                                            <strong>Clinical Significance Prediction:</strong> {item.Clinical_Significance_Prediction  || 'N/A'}
                                         </Typography>
                                         <Typography variant="body1" sx={{ color: "#fff" }}>
-                                            <strong>Disease Prediction:</strong> {item.DiseasePrediction}
+                                            <strong>Disease Prediction:</strong> {item.Disease_Prediction || 'N/A'}
                                         </Typography>
                                     </Box>
                                 </Grid>

@@ -28,6 +28,14 @@ body {
 body::-webkit-scrollbar {
   display: none !important;
 }
+.dna-body{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+}
 
 .dna {
   height: 65vmin;
@@ -38,6 +46,11 @@ body::-webkit-scrollbar {
   rotate: 30deg;
   gap: 0.5vmin;
   animation: rotate 14s infinite linear;
+  margin-left: 75px;
+}
+
+.loading-text{
+  max-width: 100%;
 }
 
 @keyframes rotate {

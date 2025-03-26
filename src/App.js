@@ -28,6 +28,7 @@ function App() {
       <Mainpage/>
       {/* <HealthNutritionInfo/> */}
       {/* <Loader/> */}
+      {/* <DNAAnimation/> */}
     </div>
   );
 }

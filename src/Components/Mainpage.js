@@ -40,32 +40,7 @@ export default function Mainpage() {
   const [recommendation, setRecommendation] = useState(null);
   const [showpage2, setShowpage2] = useState(false);
 
-  const handleupload = async () => {
-    if (!selectedFile) {
-      alert('Please select a file before uploading');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    try {
-      setIsUploading(true); // Start upload
-      const res = await fetch('https://98ef-2401-4900-55b7-a240-7153-b0bc-7d07-f1c5.ngrok-free.app/predict_from_csv', {
-        method: 'POST',
-        applicationType: 'application/json',
-        body: formData,
-      });
-      
-      const data = await res.json(); // Assuming the response is JSON
-      console.log('Upload response:', data);
-      setCsvresult(data); // Use setCsvresult to update state
-      setIsUploading(false); // Stop upload
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      setIsUploading(false); // Stop upload on error
-    }
-  };
+  
 
   // Simulate loading for 3 seconds on page load
   setTimeout(() => {
@@ -114,7 +89,7 @@ export default function Mainpage() {
     }
   
     // Prepare data to send to the API
-    const url = "https://f433-2401-4900-55b7-a240-9c27-7cd4-d3ad-29e6.ngrok-free.app/generate_recommendations";
+    const url = "https://3633-2401-4900-51d8-83f9-e4e2-4e77-1914-fd58.ngrok-free.app/generate_recommendations";
     const data = {
       name: name,
       age: parseInt(age),
@@ -154,7 +129,7 @@ export default function Mainpage() {
       const formData = new FormData();
       formData.append('file', selectedFile);
   
-      const res2 = await fetch('https://f433-2401-4900-55b7-a240-9c27-7cd4-d3ad-29e6.ngrok-free.app/predict_from_csv', {
+      const res2 = await fetch('https://3633-2401-4900-51d8-83f9-e4e2-4e77-1914-fd58.ngrok-free.app/predict_from_csv', {
         method: 'POST',
         body: formData, // Send formData in the body
       });
@@ -322,6 +297,7 @@ export default function Mainpage() {
                   label="Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  autoComplete="off"
                   sx={{
                     color: "#fff",
                     "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -342,6 +318,7 @@ export default function Mainpage() {
                   id="diagnosed-input"
                   label="Diagnosed History (comma separated, if any)"
                   value={diagnosed_ailment}
+                  autoComplete="off"
                   onChange={(e) => setDiagnosed(e.target.value)}
                   multiline
                   rows={4} // Set the number of rows for the text area
@@ -441,6 +418,7 @@ export default function Mainpage() {
                   id="age-input"
                   label="Age"
                   value={age}
+                  autoComplete="off"
                   onChange={(e) => setAge(e.target.value)}
                   sx={{
                     color: "#fff",
@@ -509,12 +487,13 @@ export default function Mainpage() {
                     },
                   }}
                 >
-                  Weight
+                  Weight (in kg)
                 </InputLabel>
                 <OutlinedInput
                   id="weight-input"
                   label="Weight"
                   value={body_weight}
+                  autoComplete="off"
                   onChange={(e) => setWeight(e.target.value)}
                   sx={{
                     color: "#fff",
@@ -543,12 +522,13 @@ export default function Mainpage() {
                     },
                   }}
                 >
-                  Height
+                  Height (in cm)
                 </InputLabel>
                 <OutlinedInput
                   id="height-input"
                   label="Height"
                   value={height}
+                  autoComplete="off"
                   onChange={(e) => setHeight(e.target.value)}
                   sx={{
                     color: "#fff",
